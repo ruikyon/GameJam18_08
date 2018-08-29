@@ -1,7 +1,3 @@
- /// <summary>
-/// 
-/// </summary>
-
 using UnityEngine;
 using System;
 using System.Collections;
@@ -13,6 +9,7 @@ using System.Collections;
 public class IK : MonoBehaviour {
 	
 	protected Animator avatar;
+    public static IK instance;
 	
 	public bool ikActive = false;
 	public Transform bodyObj = null;
@@ -40,14 +37,17 @@ public class IK : MonoBehaviour {
 	void Start () 
 	{
 		avatar = GetComponent<Animator>();
+        instance = this;
+        //SetPosi();
 	}
 
-	void OnGUI()
-	{
 
-		GUILayout.Label("Activate IK and move the Effectors around in Scene View");
-		ikActive = GUILayout.Toggle(ikActive, "Activate IK");
-	}
+	//void OnGUI()
+	//{
+
+	//	GUILayout.Label("Activate IK and move the Effectors around in Scene View");
+	//	ikActive = GUILayout.Toggle(ikActive, "Activate IK");
+	//}
 		
     
 	void OnAnimatorIK(int layerIndex)
@@ -159,4 +159,51 @@ public class IK : MonoBehaviour {
 			}
 		}
 	}  
+
+    public void SetPosi()
+    {
+        avatar.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 0);
+        avatar.SetIKRotationWeight(AvatarIKGoal.LeftFoot, 0);
+
+        avatar.SetIKPositionWeight(AvatarIKGoal.RightFoot, 0);
+        avatar.SetIKRotationWeight(AvatarIKGoal.RightFoot, 0);
+
+        avatar.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0);
+        avatar.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0);
+
+        avatar.SetIKPositionWeight(AvatarIKGoal.RightHand, 0);
+        avatar.SetIKRotationWeight(AvatarIKGoal.RightHand, 0);
+
+        avatar.SetLookAtWeight(0.0f);
+
+        if (bodyObj != null)
+        {
+            bodyObj.position = avatar.bodyPosition;
+            bodyObj.rotation = avatar.bodyRotation;
+        }
+
+        if (leftFootObj != null)
+        {
+            leftFootObj.position = avatar.GetIKPosition(AvatarIKGoal.LeftFoot);
+            leftFootObj.rotation = avatar.GetIKRotation(AvatarIKGoal.LeftFoot);
+        }
+
+        if (rightFootObj != null)
+        {
+            rightFootObj.position = avatar.GetIKPosition(AvatarIKGoal.RightFoot);
+            rightFootObj.rotation = avatar.GetIKRotation(AvatarIKGoal.RightFoot);
+        }
+
+        if (leftHandObj != null)
+        {
+            leftHandObj.position = avatar.GetIKPosition(AvatarIKGoal.LeftHand);
+            leftHandObj.rotation = avatar.GetIKRotation(AvatarIKGoal.LeftHand);
+        }
+
+        if (rightHandObj != null)
+        {
+            rightHandObj.position = avatar.GetIKPosition(AvatarIKGoal.RightHand);
+            rightHandObj.rotation = avatar.GetIKRotation(AvatarIKGoal.RightHand);
+        }
+    }
 }

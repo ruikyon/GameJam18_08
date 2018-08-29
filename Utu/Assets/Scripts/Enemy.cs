@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Enemy : MonoBehaviour
 {
@@ -23,14 +24,17 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         instance = this;
-        origin = transform.position;
+        origin = transform.position + new Vector3(0, 1, 0);
         counter = waitTime;
 
         for (int i = 0; i < rays.Length; i++)
         {
-            rays[i].SetPosition(0, transform.position);
+            rays[i].SetPosition(0, origin);
             rays[i].gameObject.SetActive(false);
         }
+
+        maxWide *= GameController.level + 1;
+        minWide *= GameController.level + 1;
     }
 
     // Update is called once per frame
@@ -58,12 +62,17 @@ public class Enemy : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            GameController.finalScore = GameController.instance.GetScore();
+            SceneManager.LoadScene("EndScene");
+        }
     }
 
     private void LineShow()//Debug.DrawRayでレイを表示
     {
         Debug.Log("wave: " + waveCounter);
-        shotCount = waveCounter / 5 + 1;
+        shotCount = (waveCounter / 5 + 1) * (GameController.level+1);
         for (int i = 0; i < shotCount; i++)
         {
             var height = Random.Range(minHeight, maxHeight);
@@ -75,7 +84,7 @@ public class Enemy : MonoBehaviour
 
     private void Judge() //レイを飛ばして判定
     {
-        shotCount = waveCounter / 5 + 1;
+        shotCount = (waveCounter / 5 + 1) * (GameController.level + 1);
         var flag = false;
         point = 0;
         for (int i = 0; i < shotCount; i++)
@@ -83,7 +92,7 @@ public class Enemy : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(origin, rays[i].GetPosition(1) - origin, out hit, 20))
             {
-                Debug.Log("hit");
+                Debug.Log("hit: "+hit.collider.tag);
 
                 switch (hit.collider.tag)
                 {

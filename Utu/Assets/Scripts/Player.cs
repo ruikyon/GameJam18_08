@@ -9,18 +9,20 @@ public class Player : MonoBehaviour {
     [SerializeField]
     Transform hip;
     public int shoot = 0;
-    public GameObject ragdoll, normal, ragRoot, normalRoot;
+    public GameObject normal, normalRoot;
     [SerializeField]
     GameObject uc_prefab;
     private GameObject tempUc;
+    private bool first = false;
 
     public static Player instance;
 
 	// Use this for initialization
 	void Start () {
         instance = this;
+        shoot = 10;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
         if (shoot > 0)
@@ -32,9 +34,17 @@ public class Player : MonoBehaviour {
                 deg = 0;
                 transform.position = new Vector3(0, 0, -4);
                 hip.eulerAngles = Vector3.zero;
+                hip.position += new Vector3(0, 0.2f-height, 0);
+                height = 0.2f;
                 normal.SetActive(true);
                 normalRoot.SetActive(true);
-                Destroy(tempUc);
+                if (!first)
+                {
+                    IK.instance.SetPosi();
+                    IK.instance.ikActive = true;
+                    first = true;
+                }
+                else Destroy(tempUc);
             }
         }
         else

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour {
     public static GameController instance;
+    public static int level = 0, finalScore;
 
     private int score;
 
